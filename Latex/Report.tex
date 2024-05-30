@@ -257,6 +257,88 @@ $$
 $$
 where again $\beta=\alpha \beta^*$ and $\varepsilon_t \sim \operatorname{NID}\left(0, \sigma^2\right)$.
 
+\subsection{RNN (Recurrent Neural Network)}
+Recurrent Neural Networks (RNNs) are a class of neural networks that are designed to process sequential data, such as text, speech, or time-series data. Unlike traditional feedforward neural networks, which process inputs independently, RNNs maintain an internal state (called the hidden state) that allows them to incorporate information from previous inputs into the current output.
+
+The key idea behind RNNs is that they use the same set of weights (parameters) to process each element of the sequence, with the hidden state being passed from one time step to the next. This allows the network to capture temporal dependencies in the data, which is particularly important for tasks like language modeling, machine translation, and speech recognition.
+$$
+\begin{aligned}
+	h_t &= f(W_x \cdot x_t + W_h \cdot h_{(t-1)} + b) \\
+	y_t &= g(W_y \cdot h_t + c)
+\end{aligned}
+$$
+where:
+\begin{itemize}
+	\item $h_t$ is the hidden state at time $t$
+	\item $x_t$ is the input at time $t$
+	\item $W_x$, $W_h$, $W_y$ are the weight matrices
+	\item $b$, $c$ are the biases
+	\item $f$ is a nonlinear activation function, such as $\tanh$ or $\text{ReLU}$
+	\item $g$ is the output function, such as a softmax for classification or a linear function for regression
+\end{itemize}
+
+The key idea behind RNNs is that they use the same set of weights to process each element of the sequence, with the hidden state being passed from one time step to the next. This allows the network to capture temporal dependencies in the data.
+
+\subsection{LSTM (Long Short-Term Memory)}
+Long Short-Term Memory (LSTMs) are an advanced RNN architecture designed to address the vanishing gradient problem. LSTMs introduce specialized gates (forget, input, and output) that control the flow of information into and out of the cell state, allowing the network to store and access information over longer periods of time.
+
+The key components of an LSTM are:
+\begin{itemize}
+	\item Forget gate ($f_t$): Decides what information from the previous cell state ($C_{t-1}$) to keep or forget.
+	\item Input gate ($i_t$): Decides what new information from the current input ($x_t$) and previous hidden state ($h_{t-1}$) to add to the cell state.
+	\item Cell state ($C_t$): The "memory" of the LSTM, which is updated based on the forget and input gates.
+	\item Output gate ($o_t$): Decides what information from the current cell state ($C_t$) and input ($x_t$) to use to produce the current hidden state ($h_t$).
+\end{itemize}
+
+The ability of LSTMs to selectively remember and forget information, as well as their capacity to capture long-term dependencies, has made them a widely used and successful architecture for various sequence-to-sequence tasks.
+$$
+\begin{aligned}
+	f_t &= \sigma(W_f \cdot [h_{t-1}, x_t] + b_f) \\
+	i_t &= \sigma(W_i \cdot [h_{t-1}, x_t] + b_i) \\
+	\tilde{C}_t &= \tanh(W_C \cdot [h_{t-1}, x_t] + b_C) \\
+	C_t &= f_t \odot C_{t-1} + i_t \odot \tilde{C}_t \\
+	o_t &= \sigma(W_o \cdot [h_{t-1}, x_t] + b_o) \\
+	h_t &= o_t \odot \tanh(C_t)
+\end{aligned}
+$$
+\subsection{GRU (Gated Recurrent Unit)}
+
+Gated Recurrent Unit (GRU) is another type of advanced Recurrent Neural Network (RNN) architecture, similar to Long Short-Term Memory (LSTM) networks. GRUs were introduced as a simpler alternative to LSTMs, aiming to achieve similar performance while reducing the number of parameters and the overall complexity of the model.
+
+The key components of a GRU cell are:
+
+The update gate determines what information from the previous hidden state ($h_{t-1}$) and the current input ($x_t$) should be used to update the current hidden state ($h_t$). The update gate is defined as:
+$$
+\begin{aligned}
+	z_t = \sigma(W_z \cdot [h_{t-1}, x_t] + b_z)
+\end{aligned}
+$$
+where $\sigma$ is the sigmoid activation function, $W_z$ is the weight matrix, and $b_z$ is the bias.
+
+The reset gate decides what information from the previous hidden state ($h_{t-1}$) should be used to compute the current candidate hidden state ($\tilde{h}_t$). This allows the GRU to selectively forget or reset the hidden state based on the current input. The reset gate is defined as:
+$$
+\begin{aligned}
+	r_t = \sigma(W_r \cdot [h_{t-1}, x_t] + b_r)
+\end{aligned}
+$$
+
+The candidate hidden state is a temporary hidden state that is created based on the current input ($x_t$) and the previous hidden state ($h_{t-1}$) scaled by the reset gate ($r_t$). This candidate state is then used to update the actual hidden state. The candidate hidden state is defined as:
+$$
+\begin{aligned}
+	\tilde{h}t = \tanh(W_h \cdot [r_t \odot h{t-1}, x_t] + b_h)
+\end{aligned}
+$$
+where $\tanh$ is the hyperbolic tangent activation function, and $\odot$ represents element-wise multiplication.
+
+The final hidden state is computed as a linear interpolation between the previous hidden state ($h_{t-1}$) and the candidate hidden state ($\tilde{h}_t$), with the update gate ($z_t$) controlling the balance between the two:
+$$
+\begin{aligned}
+	h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t
+\end{aligned}
+$$
+
+The GRU architecture, with its simplified structure compared to LSTMs, has shown competitive performance in various sequence-to-sequence tasks, such as language modeling, machine translation, and speech recognition, while often requiring fewer parameters and less computational resources.
+
 \subsection{BAGGING MODELS (Bootstrap Aggregating)}
 Introduction to Bagging (Bootstrap Aggregating)
 Bagging (Bootstrap Aggregating) is a model training technique based on creating sub-samples of data from the original training dataset using bootstrap sampling technique.
